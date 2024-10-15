@@ -49,7 +49,7 @@ dependencies {
     implementation libs.lifecycle.reactivestreams.ktx
 
     implementation("com.google.dagger:dagger:2.51")
-    kapt("com.google.dagger:dagger-compiler:2.35.1")
+    kapt("com.google.dagger:dagger-compiler:2.51")
 
     implementation libs.androidx.room.runtime
     kapt libs.room.compiler

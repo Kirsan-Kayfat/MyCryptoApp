@@ -6,21 +6,21 @@ import androidx.lifecycle.map
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.shuchenysh.mycryptoapp.data.database.AppDatabase
+import com.shuchenysh.mycryptoapp.data.database.CoinInfoDao
 import com.shuchenysh.mycryptoapp.data.mapper.CoinMapper
-import com.shuchenysh.mycryptoapp.data.network.ApiFactory
 import com.shuchenysh.mycryptoapp.data.workers.RefreshDataWorker
 import com.shuchenysh.mycryptoapp.domain.CoinInfo
 import com.shuchenysh.mycryptoapp.domain.CoinRepository
-import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class CoinRepositoryImpl(
-    private val application: Application
+
+class CoinRepositoryImpl @Inject constructor(
+    private val application: Application,
+    private val mapper: CoinMapper,
+    private val coinInfoDao: CoinInfoDao
 ) : CoinRepository {
 
-    private val coinInfoDao = AppDatabase.getInstance(application).coinPriceInfoDao()
-    private val mapper = CoinMapper()
-
-    override fun getCoinInfoList(): LiveData<List<CoinInfo>> {
+   override fun getCoinInfoList(): LiveData<List<CoinInfo>> {
         return coinInfoDao.getPriceList().map {
             it.map {
                 mapper.mapDbModelToEntity(it)
