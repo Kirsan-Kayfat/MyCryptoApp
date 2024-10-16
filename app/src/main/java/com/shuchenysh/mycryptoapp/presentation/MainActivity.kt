@@ -7,6 +7,7 @@ import com.shuchenysh.mycryptoapp.R
 import com.shuchenysh.mycryptoapp.databinding.ActivityMainBinding
 import com.shuchenysh.mycryptoapp.domain.CoinInfo
 import com.shuchenysh.mycryptoapp.presentation.adapters.CoinInfoAdapter
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,7 +17,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (application as CoinApp).component
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         val adapter = CoinInfoAdapter(this)
@@ -31,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         }
         binding.rvCoinListContainer.adapter = adapter
         binding.rvCoinListContainer.itemAnimator = null
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         viewModel.coinInfoList.observe(this) { adapter.submitList(it) }
     }
 

@@ -1,7 +1,9 @@
 package com.shuchenysh.mycryptoapp.domain
 
-class LoadDataUseCase(private val repository: CoinRepository) {
+import javax.inject.Inject
 
-    suspend operator fun invoke() = repository.loadData()
+class LoadDataUseCase @Inject constructor(private val repository: CoinRepository) {
+
+    operator fun invoke() = repository.loadData()
 
 }
