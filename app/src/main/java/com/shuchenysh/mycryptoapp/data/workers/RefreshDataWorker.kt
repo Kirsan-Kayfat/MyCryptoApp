@@ -2,18 +2,18 @@ package com.shuchenysh.mycryptoapp.data.workers
 
 import android.content.Context
 import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
-import com.shuchenysh.mycryptoapp.data.database.AppDatabase
 import com.shuchenysh.mycryptoapp.data.database.CoinInfoDao
 import com.shuchenysh.mycryptoapp.data.mapper.CoinMapper
-import com.shuchenysh.mycryptoapp.data.network.ApiFactory
 import com.shuchenysh.mycryptoapp.data.network.ApiService
+import com.shuchenysh.mycryptoapp.di.ChildWorkerFactory
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class RefreshDataWorker @Inject constructor(
+class RefreshDataWorker (
     context: Context,
     workerParameters: WorkerParameters,
     private val coinInfoDao: CoinInfoDao,
@@ -42,6 +42,24 @@ class RefreshDataWorker @Inject constructor(
 
         fun makeRequest(): OneTimeWorkRequest {
             return OneTimeWorkRequestBuilder<RefreshDataWorker>().build()
+        }
+    }
+
+    class Factory @Inject constructor(
+        private val coinInfoDao: CoinInfoDao,
+        private val apiService: ApiService,
+        private val mapper: CoinMapper
+    ) : ChildWorkerFactory {
+
+        override fun create(
+            context: Context,
+            workerParameters: WorkerParameters
+        ): ListenableWorker {
+            return RefreshDataWorker(
+                context,
+                workerParameters,
+                coinInfoDao, apiService, mapper
+            )
         }
     }
 }
